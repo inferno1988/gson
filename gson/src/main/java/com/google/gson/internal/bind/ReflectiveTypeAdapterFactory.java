@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.IgnoreNullValue;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.$Gson$Types;
@@ -127,8 +128,10 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
       @Override void read(JsonReader reader, Object value)
           throws IOException, IllegalAccessException {
         Object fieldValue = typeAdapter.read(reader);
-        if (fieldValue != null || !isPrimitive) {
-          field.set(value, fieldValue);
+        if(fieldValue != null || !field.isAnnotationPresent(IgnoreNullValue.class)) {
+          if(fieldValue != null || !isPrimitive) {
+            field.set(value, fieldValue);
+          }
         }
       }
       @Override public boolean writeField(Object value) throws IOException, IllegalAccessException {
